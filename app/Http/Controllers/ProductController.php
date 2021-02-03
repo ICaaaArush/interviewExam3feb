@@ -7,6 +7,7 @@ use App\Models\ProductVariant;
 use App\Models\ProductVariantPrice;
 use App\Models\Variant;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class ProductController extends Controller
 {
@@ -17,9 +18,69 @@ class ProductController extends Controller
      */
     public function index()
     {
-        return view('products.index');
-    }
+        //  SEND PAGINATED DATA + ALL PRODUCT DATA
+        $products= Product::paginate(10);
+        // dd($products);
 
+        $allproducts = Product::all();
+
+        //  FETCH PRODUCT PRICE
+        $productVariantPrice = ProductVariantPrice::all();
+        $productVariantPrice = $productVariantPrice->toArray();
+        $productPrice = array_column($productVariantPrice, 'price', 'product_id');
+        $productStock = array_column($productVariantPrice, 'stock', 'product_id');
+        //dd($productVariantPrice);
+
+        //  FETCH PRODUCT COLOR
+        $productVariantColor = DB::table('product_variants')->where('variant_id',1)->get();
+
+        //  FETCH PRODUCT SIZE
+        $productVariantSize = DB::table('product_variants')->where('variant_id',2)->get();
+
+        //  FETCH PRODUCT STYLE
+        $productVariantStyle = DB::table('product_variants')->where('variant_id',3)->get();
+        
+        return view('products.index')->with('products', $products)
+                ->with('allproducts', $allproducts)
+                ->with('productVariantPrice', $productVariantPrice)
+                ->with('productVariantColor', $productVariantColor)
+                ->with('productVariantSize', $productVariantSize)
+                ->with('productPrice', $productPrice)
+                ->with('productStock', $productStock)
+                ->with('productVariantStyle', $productVariantStyle);
+    }
+    public function search(Request $request)
+    {
+        // $request->title
+        // $request->variant
+        // $request->price_from
+        // $request->price_to
+        // $request->date)
+        //  FETCH SIMILAR RESULTS BY INPUT TITILE
+        $productTitle = DB::table('products')->where('title', $request->title)->get();
+        // ->where('title', '=', $request->title)
+        // ->orWhere(function ($query) {
+        //     $query->where('', '>', 100)
+        //           ->where('title', '<>', 'Admin');
+        // })
+
+        //  SEND ALL PRODUCT DATA
+        $allproducts = Product::all();
+
+        //  FETCH PRODUCT PRICE
+        $productVariantPrice = ProductVariantPrice::all();
+
+        //  FETCH PRODUCT COLOR
+        $productVariantColor = DB::table('product_variants')->where('variant_id',1)->get();
+
+        //  FETCH PRODUCT SIZE
+        $productVariantSize = DB::table('product_variants')->where('variant_id',2)->get();
+
+        //  FETCH PRODUCT STYLE
+        $productVariantStyle = DB::table('product_variants')->where('variant_id',3)->get();
+        
+        return view('products.show')->with('allproducts', $allproducts)->with('productTitle', $productTitle)->with('productVariantPrice', $productVariantPrice)->with('productVariantColor', $productVariantColor)->with('productVariantSize', $productVariantSize)->with('productVariantStyle', $productVariantStyle);
+    }
     /**
      * Show the form for creating a new resource.
      *

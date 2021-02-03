@@ -1,6 +1,8 @@
 @extends('layouts.app')
 
 @section('content')
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
     <div class="d-sm-flex align-items-center justify-content-between mb-4">
         <h1 class="h3 mb-0 text-gray-800">Products</h1>
@@ -8,14 +10,17 @@
 
 
     <div class="card">
-        <form action="" method="get" class="card-header">
+        <form action="{{ route('search') }}" method="get" class="card-header">
             <div class="form-row justify-content-between">
                 <div class="col-md-2">
                     <input type="text" name="title" placeholder="Product Title" class="form-control">
                 </div>
                 <div class="col-md-2">
                     <select name="variant" id="" class="form-control">
-
+                        <option value="">--Please choose an option--</option>
+                        <option value="Color">Color</option>
+                        <option value="Size">Size</option>
+                        <option value="Style">Style</option>
                     </select>
                 </div>
 
@@ -24,8 +29,8 @@
                         <div class="input-group-prepend">
                             <span class="input-group-text">Price Range</span>
                         </div>
-                        <input type="text" name="price_from" aria-label="First name" placeholder="From" class="form-control">
-                        <input type="text" name="price_to" aria-label="Last name" placeholder="To" class="form-control">
+                        <input type="number" name="price_from" aria-label="First name" placeholder="From" class="form-control">
+                        <input type="number" name="price_to" aria-label="Last name" placeholder="To" class="form-control">
                     </div>
                 </div>
                 <div class="col-md-2">
@@ -39,6 +44,17 @@
 
         <div class="card-body">
             <div class="table-response">
+                <!-- FOR LOOP START -->
+                @for($i = 0; $i < count($products); $i++)
+                    @php
+                    $date1 = new DateTime("now");
+
+                    $date2 = date_create($products[$i]->created_at);
+
+                    $diff = date_diff($date1,$date2);
+
+                    $hour = $diff->h;
+                                        @endphp
                 <table class="table">
                     <thead>
                     <tr>
@@ -46,26 +62,25 @@
                         <th>Title</th>
                         <th>Description</th>
                         <th>Variant</th>
-                        <th width="150px">Action</th>
+                        <th width="100px">Action</th>
                     </tr>
                     </thead>
 
                     <tbody>
 
                     <tr>
-                        <td>1</td>
-                        <td>T-Shirt <br> Created at : 25-Aug-2020</td>
-                        <td>Quality product in low cost</td>
+                        <td>{{ $products[$i]->id }}</td>
+                        <td>{{ $products[$i]->title }} <br>Created at : {{  $hour  }} hours ago</td>
+                        <td>{{ $products[$i]->description }}</td>
                         <td>
                             <dl class="row mb-0" style="height: 80px; overflow: hidden" id="variant">
 
-                                <dt class="col-sm-3 pb-0">
-                                    SM/ Red/ V-Nick
-                                </dt>
+                                <dt class="col-sm-3 pb-0">{{ $productVariantSize[$i]->variant }}/{{ $productVariantColor[$i]->variant }}/{{$productVariantStyle[$i]->variant}}</dt>
                                 <dd class="col-sm-9">
                                     <dl class="row mb-0">
-                                        <dt class="col-sm-4 pb-0">Price : {{ number_format(200,2) }}</dt>
-                                        <dd class="col-sm-8 pb-0">InStock : {{ number_format(50,2) }}</dd>
+                                        <dt class="col-sm-4 pb-0">Price : {{ $productPrice[ $products[$i]->id ] }}</dt>
+                                        <dd class="col-sm-8 pb-0">InStock: {{ $productStock[ $products[$i]->id ] }}
+                                         </dd>
                                     </dl>
                                 </dd>
                             </dl>
@@ -81,17 +96,23 @@
                     </tbody>
 
                 </table>
+                @endfor
+                <!-- FOR LOOP END -->
             </div>
 
         </div>
 
         <div class="card-footer">
             <div class="row justify-content-between">
+                
                 <div class="col-md-6">
-                    <p>Showing 1 to 10 out of 100</p>
+                    <!-- PRODUCT LISTING DETAILS START -->
+                    <!-- <p>Showing {{$j ?? 0}} to {{$i}} out of {{count($allproducts)}}</p> -->
+                    <p>Showing {{$products->firstItem() }} to {{$products->lastItem()}} out of {{$products->total()}}</p>
+                    <!-- PRODUCT LISTING DETAILS END -->
                 </div>
                 <div class="col-md-2">
-
+                {{ $products->links() }}
                 </div>
             </div>
         </div>
