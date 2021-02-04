@@ -1,11 +1,12 @@
 @extends('layouts.app')
 
 @section('content')
+
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
     <div class="d-sm-flex align-items-center justify-content-between mb-4">
-        <h1 class="h3 mb-0 text-gray-800">productTitle</h1>
+        <h1 class="h3 mb-0 text-gray-800">Products</h1>
     </div>
 
 
@@ -16,12 +17,7 @@
                     <input type="text" name="title" placeholder="Product Title" class="form-control">
                 </div>
                 <div class="col-md-2">
-                    <select name="variant" id="" class="form-control">
-                        <option value="">--Please choose an option--</option>
-                        <option value="Color">Color</option>
-                        <option value="Size">Size</option>
-                        <option value="Style">Style</option>
-                    </select>
+                    <input type="text" name="variant" placeholder="variant" class="form-control">
                 </div>
 
                 <div class="col-md-3">
@@ -45,10 +41,16 @@
         <div class="card-body">
             <div class="table-response">
                 <!-- FOR LOOP START -->
-                @for($i = 0; $i < count($productTitle); $i++)
+                @for($i = 0; $i < count($products); $i++)
                     @php
-                    $j = $productTitle[0]->id
-                    @endphp
+                    $date1 = new DateTime("now");
+
+                    $date2 = date_create($products[$i]->created_at);
+
+                    $diff = date_diff($date1,$date2);
+
+                    $hour = $diff->h;
+                                        @endphp
                 <table class="table">
                     <thead>
                     <tr>
@@ -63,17 +65,18 @@
                     <tbody>
 
                     <tr>
-                        <td>{{ $productTitle[$i]->id }}</td>
-                        <td>{{ $productTitle[$i]->title }} <br>{{ $productTitle[$i]->created_at }}</td>
-                        <td>{{ $productTitle[$i]->description }}</td>
+                        <td>{{ $products[$i]->id }}</td>
+                        <td>{{ $products[$i]->title }} <br>Created at : {{  $hour  }} hours ago</td>
+                        <td>{{ $products[$i]->description }}</td>
                         <td>
                             <dl class="row mb-0" style="height: 80px; overflow: hidden" id="variant">
 
-                                <dt class="col-sm-3 pb-0">{{ $productVariantSize[$i]->variant }}/{{ $productVariantColor[$i]->variant }}/{{$productVariantStyle[$i]->variant}}</dt>
+                                <dt class="col-sm-3 pb-0">{{ $productSize[ $products[$i]->id ] }}/{{ $productColor[ $products[$i]->id ] }}/{{ $productStyle[ $products[$i]->id ] }}</dt>
                                 <dd class="col-sm-9">
                                     <dl class="row mb-0">
-                                        <dt class="col-sm-4 pb-0">Price : {{ $productVariantPrice[$i]->price }}</dt>
-                                        <dd class="col-sm-8 pb-0">InStock : </dd>
+                                        <dt class="col-sm-4 pb-0">Price : {{ $productPrice[ $products[$i]->id ] }}</dt>
+                                        <dd class="col-sm-8 pb-0">InStock: {{ $productStock[ $products[$i]->id ] }}
+                                        </dd>
                                     </dl>
                                 </dd>
                             </dl>
@@ -100,13 +103,14 @@
                 
                 <div class="col-md-6">
                     <!-- PRODUCT LISTING DETAILS START -->
-                    <p>Showing {{$j ?? 0}} to {{$i}} out of {{count($productTitle)}}</p>
+                    <p>Showing {{$products->firstItem() }} to {{$products->lastItem()}} out of {{$products->total()}}</p>
                     <!-- PRODUCT LISTING DETAILS END -->
                 </div>
                 <div class="col-md-2">
-                
+                {{ $products->links() }}
                 </div>
             </div>
         </div>
     </div>
+
 @endsection

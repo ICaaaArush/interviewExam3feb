@@ -1,6 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
+
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
@@ -16,12 +17,7 @@
                     <input type="text" name="title" placeholder="Product Title" class="form-control">
                 </div>
                 <div class="col-md-2">
-                    <select name="variant" id="" class="form-control">
-                        <option value="">--Please choose an option--</option>
-                        <option value="Color">Color</option>
-                        <option value="Size">Size</option>
-                        <option value="Style">Style</option>
-                    </select>
+                    <input type="text" name="variant" placeholder="variant" class="form-control">
                 </div>
 
                 <div class="col-md-3">

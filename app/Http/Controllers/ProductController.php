@@ -8,6 +8,7 @@ use App\Models\ProductVariantPrice;
 use App\Models\Variant;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Eloquent\Builder;
 
 class ProductController extends Controller
 {
@@ -42,7 +43,8 @@ class ProductController extends Controller
         $productVariantStyle = $productVariantStyle->toArray();
         $productStyle = array_column($productVariantStyle, 'variant', 'product_id');
         
-        return view('products.index')->with('products', $products)
+        return view('products.index')
+                ->with('products', $products)
                 ->with('productColor', $productColor)
                 ->with('productSize', $productSize)
                 ->with('productPrice', $productPrice)
@@ -51,13 +53,49 @@ class ProductController extends Controller
     }
     public function search(Request $request)
     {
-        // $request->title
-        // $request->variant
+       // dd($request->all());
+        // 
         // $request->price_from
         // $request->price_to
         // $request->date)
+        // $productDetails = Product::all();
+        // if ($request->price_from) {
+        //     $productDetails->whereHas('productVariantPrices', function($q) use($request){
+        //         $q->where('price', ">" ,$request->price_from);
+        //     });
+        // }
+        
+
+        // $fetchProductVariant = Product::find(1)->productVariants;
+        // $fetchProductVariant = Product::where('product_id', 3)->productVariants;
+        // dd($fetchProductVariant);
+        //     Project::with(['clients', 'tasks', 'status' => function($q) use($value) {
+        //         // Query the name field in status table
+        //         $q->where('name', '=', $value); // '=' is optional
+        //     }])
+
+        // if ($request->title) {
+        //     $productTitle = DB::table('products')->where('title', 'like', "%{$request->title}%")->get();
+        //     $productTitle = $productTitle->toArray();
+        //     $productId = array_column($productTitle, 'id');
+        // }
+        
+
+        // $fetchProductVariantPrice = Product::find($productId)->productVariantPrices;
+        // dd($fetchProductVariantPrice);
+
+        $productVariants = ProductVariantPrice::whereHas('productVariantPrices', function (Builder $query) {
+            $query->where('variant', 'like', "request->variant%");
+        })->get();
+        foreach ($productVariants as $productVariant) {
+            echo "hey ";
+        }
+
         //  FETCH SIMILAR RESULTS BY INPUT TITILE
-        $productTitle = DB::table('products')->where('title', $request->title)->get();
+        
+        $productTitle = DB::table('products')->where('title', 'like', "%{$request->title}%"
+
+        )->get();
         // ->where('title', '=', $request->title)
         // ->orWhere(function ($query) {
         //     $query->where('', '>', 100)
@@ -79,7 +117,12 @@ class ProductController extends Controller
         //  FETCH PRODUCT STYLE
         $productVariantStyle = DB::table('product_variants')->where('variant_id',3)->get();
         
-        return view('products.show')->with('allproducts', $allproducts)->with('productTitle', $productTitle)->with('productVariantPrice', $productVariantPrice)->with('productVariantColor', $productVariantColor)->with('productVariantSize', $productVariantSize)->with('productVariantStyle', $productVariantStyle);
+        return view('products.show')->with('allproducts', $allproducts)
+        ->with('productTitle', $productTitle)
+        ->with('productVariantPrice', $productVariantPrice)
+        ->with('productVariantColor', $productVariantColor)
+        ->with('productVariantSize', $productVariantSize)
+        ->with('productVariantStyle', $productVariantStyle);
     }
     /**
      * Show the form for creating a new resource.
