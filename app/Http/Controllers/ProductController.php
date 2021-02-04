@@ -20,34 +20,34 @@ class ProductController extends Controller
     {
         //  SEND PAGINATED DATA + ALL PRODUCT DATA
         $products= Product::paginate(10);
-        // dd($products);
 
-        $allproducts = Product::all();
-
-        //  FETCH PRODUCT PRICE
+        //  FETCH PRODUCT PRICE WITH PRODUCT ID
         $productVariantPrice = ProductVariantPrice::all();
         $productVariantPrice = $productVariantPrice->toArray();
         $productPrice = array_column($productVariantPrice, 'price', 'product_id');
         $productStock = array_column($productVariantPrice, 'stock', 'product_id');
-        //dd($productVariantPrice);
 
-        //  FETCH PRODUCT COLOR
+        //  FETCH PRODUCT COLOR WITH PRODUCT ID
         $productVariantColor = DB::table('product_variants')->where('variant_id',1)->get();
+        $productVariantColor = $productVariantColor->toArray();
+        $productColor = array_column($productVariantColor, 'variant', 'product_id');
 
-        //  FETCH PRODUCT SIZE
+        //  FETCH PRODUCT SIZE WITH PRODUCT ID
         $productVariantSize = DB::table('product_variants')->where('variant_id',2)->get();
+        $productVariantSize = $productVariantSize->toArray();
+        $productSize = array_column($productVariantSize, 'variant', 'product_id');
 
-        //  FETCH PRODUCT STYLE
+        //  FETCH PRODUCT STYLE WITH PRODUCT ID
         $productVariantStyle = DB::table('product_variants')->where('variant_id',3)->get();
+        $productVariantStyle = $productVariantStyle->toArray();
+        $productStyle = array_column($productVariantStyle, 'variant', 'product_id');
         
         return view('products.index')->with('products', $products)
-                ->with('allproducts', $allproducts)
-                ->with('productVariantPrice', $productVariantPrice)
-                ->with('productVariantColor', $productVariantColor)
-                ->with('productVariantSize', $productVariantSize)
+                ->with('productColor', $productColor)
+                ->with('productSize', $productSize)
                 ->with('productPrice', $productPrice)
                 ->with('productStock', $productStock)
-                ->with('productVariantStyle', $productVariantStyle);
+                ->with('productStyle', $productStyle);
     }
     public function search(Request $request)
     {

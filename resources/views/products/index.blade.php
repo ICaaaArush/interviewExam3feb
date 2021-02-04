@@ -75,12 +75,12 @@
                         <td>
                             <dl class="row mb-0" style="height: 80px; overflow: hidden" id="variant">
 
-                                <dt class="col-sm-3 pb-0">{{ $productVariantSize[$i]->variant }}/{{ $productVariantColor[$i]->variant }}/{{$productVariantStyle[$i]->variant}}</dt>
+                                <dt class="col-sm-3 pb-0">{{ $productSize[ $products[$i]->id ] }}/{{ $productColor[ $products[$i]->id ] }}/{{ $productStyle[ $products[$i]->id ] }}</dt>
                                 <dd class="col-sm-9">
                                     <dl class="row mb-0">
                                         <dt class="col-sm-4 pb-0">Price : {{ $productPrice[ $products[$i]->id ] }}</dt>
                                         <dd class="col-sm-8 pb-0">InStock: {{ $productStock[ $products[$i]->id ] }}
-                                         </dd>
+                                        </dd>
                                     </dl>
                                 </dd>
                             </dl>
@@ -107,7 +107,6 @@
                 
                 <div class="col-md-6">
                     <!-- PRODUCT LISTING DETAILS START -->
-                    <!-- <p>Showing {{$j ?? 0}} to {{$i}} out of {{count($allproducts)}}</p> -->
                     <p>Showing {{$products->firstItem() }} to {{$products->lastItem()}} out of {{$products->total()}}</p>
                     <!-- PRODUCT LISTING DETAILS END -->
                 </div>
