@@ -1,7 +1,6 @@
 @extends('layouts.app')
 
 @section('content')
-
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
@@ -50,7 +49,7 @@
                     $diff = date_diff($date1,$date2);
 
                     $hour = $diff->h;
-                                        @endphp
+                    @endphp
                 <table class="table">
                     <thead>
                     <tr>
@@ -69,18 +68,19 @@
                         <td>{{ $products[$i]->title }} <br>Created at : {{  $hour  }} hours ago</td>
                         <td>{{ $products[$i]->description }}</td>
                         <td>
-                            <dl class="row mb-0" style="height: 80px; overflow: hidden" id="variant">
-
-                                <dt class="col-sm-3 pb-0">{{ $productSize[ $products[$i]->id ] }}/{{ $productColor[ $products[$i]->id ] }}/{{ $productStyle[ $products[$i]->id ] }}</dt>
+                            <dl class="row mb-0" style="height: 80px; overflow: hidden" id="variant{{$i}}">
+                                @foreach($products[$i]->productVariantPrices as $variants)
+                                <dt class="col-sm-3 pb-0">{{ $variants->variant_two->variant}}/ {{ $variants->variant_one->variant  }}/ {{$variants->variant_three->variant}}</dt>
+                                
                                 <dd class="col-sm-9">
                                     <dl class="row mb-0">
-                                        <dt class="col-sm-4 pb-0">Price : {{ $productPrice[ $products[$i]->id ] }}</dt>
-                                        <dd class="col-sm-8 pb-0">InStock: {{ $productStock[ $products[$i]->id ] }}
-                                        </dd>
+                                        <dt class="col-sm-4 pb-0">Price : {{$variants->price }}</dt>
+                                        <dd class="col-sm-8 pb-0">InStock: {{$variants->stock}}</dd>
                                     </dl>
                                 </dd>
+                                @endforeach
                             </dl>
-                            <button onclick="$('#variant').toggleClass('h-auto')" class="btn btn-sm btn-link">Show more</button>
+                            <button onclick="$('#variant{{$i}}').toggleClass('h-auto')" class="btn btn-sm btn-link">Show more</button>
                         </td>
                         <td>
                             <div class="btn-group btn-group-sm">

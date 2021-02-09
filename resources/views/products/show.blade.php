@@ -69,18 +69,17 @@
                         <td>{{ $products[$i]->title }} <br>Created at : {{  $hour  }} hours ago</td>
                         <td>{{ $products[$i]->description }}</td>
                         <td>
-                            <dl class="row mb-0" style="height: 80px; overflow: hidden" id="variant">
+                            <dl class="row mb-0" style="height: 80px; overflow: hidden" id="variant{{$i}}">
 
-                                <dt class="col-sm-3 pb-0">{{ $productSize[ $products[$i]->id ] }}/{{ $productColor[ $products[$i]->id ] }}/{{ $productStyle[ $products[$i]->id ] }}</dt>
+                                <dt class="col-sm-3 pb-0">//</dt>
                                 <dd class="col-sm-9">
                                     <dl class="row mb-0">
-                                        <dt class="col-sm-4 pb-0">Price : {{ $productPrice[ $products[$i]->id ] }}</dt>
-                                        <dd class="col-sm-8 pb-0">InStock: {{ $productStock[ $products[$i]->id ] }}
-                                        </dd>
+                                        <dt class="col-sm-4 pb-0">Price : </dt>
+                                        <dd class="col-sm-8 pb-0">InStock: </dd>
                                     </dl>
                                 </dd>
                             </dl>
-                            <button onclick="$('#variant').toggleClass('h-auto')" class="btn btn-sm btn-link">Show more</button>
+                            <button onclick="$('#variant{{$i}}').toggleClass('h-auto')" class="btn btn-sm btn-link">Show more</button>
                         </td>
                         <td>
                             <div class="btn-group btn-group-sm">

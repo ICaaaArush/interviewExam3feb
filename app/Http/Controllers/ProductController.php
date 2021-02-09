@@ -19,45 +19,53 @@ class ProductController extends Controller
      */
     public function index()
     {
-        //  SEND PAGINATED DATA + ALL PRODUCT DATA
-        $products= Product::paginate(10);
+        //  SEND PAGINATED DATA WITH ESTABLISHED ELOQUENT RELATIONSHIP
+        $products = Product::paginate(10);
 
-        //  FETCH PRODUCT PRICE WITH PRODUCT ID
-        $productVariantPrice = ProductVariantPrice::all();
-        $productVariantPrice = $productVariantPrice->toArray();
-        $productPrice = array_column($productVariantPrice, 'price', 'product_id');
-        $productStock = array_column($productVariantPrice, 'stock', 'product_id');
+        // foreach($products->items() as $product){
+        //     echo "Product: " . $product->title;
+        //     echo "<br>";
+        //     $variantPrices = $product->productVariantPrices;
+        //     foreach($variantPrices as $variantPrice){
 
-        //  FETCH PRODUCT COLOR WITH PRODUCT ID
-        $productVariantColor = DB::table('product_variants')->where('variant_id',1)->get();
-        $productVariantColor = $productVariantColor->toArray();
-        $productColor = array_column($productVariantColor, 'variant', 'product_id');
+        //         echo $variantPrice->variant_one->detail->title . " : " . $variantPrice->variant_one->variant . ', ' . $variantPrice->variant_two->detail->title . " : " . $variantPrice->variant_two->variant . ', ' . $variantPrice->variant_three->detail->title . " : " . $variantPrice->variant_three->variant . ', Price: ' . $variantPrice->price . ", Stock: " . $variantPrice->stock;
+        //         echo "<br><br>";
+        //     }
+        // }
+        // exit;
 
-        //  FETCH PRODUCT SIZE WITH PRODUCT ID
-        $productVariantSize = DB::table('product_variants')->where('variant_id',2)->get();
-        $productVariantSize = $productVariantSize->toArray();
-        $productSize = array_column($productVariantSize, 'variant', 'product_id');
-
-        //  FETCH PRODUCT STYLE WITH PRODUCT ID
-        $productVariantStyle = DB::table('product_variants')->where('variant_id',3)->get();
-        $productVariantStyle = $productVariantStyle->toArray();
-        $productStyle = array_column($productVariantStyle, 'variant', 'product_id');
         
-        return view('products.index')
-                ->with('products', $products)
-                ->with('productColor', $productColor)
-                ->with('productSize', $productSize)
-                ->with('productPrice', $productPrice)
-                ->with('productStock', $productStock)
-                ->with('productStyle', $productStyle);
+        return view('products.index',compact('products'));
     }
     public function search(Request $request)
-    {
-       // dd($request->all());
-        // 
+    {   
+        $products = Product::paginate(10);
+        if ($request->title){
+            $searchedProducts = Product::where('title', 'like', "%{$request->title}%")
+                                        ->whereHas('comments', function($query)
+        {
+            $query->where('in_user_id', Auth::user()->in_user_id);
+        });
+                                        // ->orWhere('city_id', $city_id)
+                                        ->get();
+                dd($searchedProducts);
+            }
+        
+        //     echo "Product: " . $product->title;
+        // for($i = 0; $i > count($products); $i++){
+
+        //     $searchedProducts = Product::where('title, 'like' '$reuqest->title)
+        //                             ->where('this', '=', 1)
+        //                             ->where('that', '=', 1)
+        //                             ->get();
+                
+        //     }
+        // }
+        //  SEND PAGINATED DATA
+        
         // $request->price_from
         // $request->price_to
-        // $request->date)
+        // $request->date
         // $productDetails = Product::all();
         // if ($request->price_from) {
         //     $productDetails->whereHas('productVariantPrices', function($q) use($request){
@@ -80,49 +88,9 @@ class ProductController extends Controller
         //     $productId = array_column($productTitle, 'id');
         // }
         
-
-        // $fetchProductVariantPrice = Product::find($productId)->productVariantPrices;
-        // dd($fetchProductVariantPrice);
-
-        $productVariants = ProductVariantPrice::whereHas('productVariantPrices', function (Builder $query) {
-            $query->where('variant', 'like', "request->variant%");
-        })->get();
-        foreach ($productVariants as $productVariant) {
-            echo "hey ";
-        }
-
-        //  FETCH SIMILAR RESULTS BY INPUT TITILE
         
-        $productTitle = DB::table('products')->where('title', 'like', "%{$request->title}%"
 
-        )->get();
-        // ->where('title', '=', $request->title)
-        // ->orWhere(function ($query) {
-        //     $query->where('', '>', 100)
-        //           ->where('title', '<>', 'Admin');
-        // })
 
-        //  SEND ALL PRODUCT DATA
-        $allproducts = Product::all();
-
-        //  FETCH PRODUCT PRICE
-        $productVariantPrice = ProductVariantPrice::all();
-
-        //  FETCH PRODUCT COLOR
-        $productVariantColor = DB::table('product_variants')->where('variant_id',1)->get();
-
-        //  FETCH PRODUCT SIZE
-        $productVariantSize = DB::table('product_variants')->where('variant_id',2)->get();
-
-        //  FETCH PRODUCT STYLE
-        $productVariantStyle = DB::table('product_variants')->where('variant_id',3)->get();
-        
-        return view('products.show')->with('allproducts', $allproducts)
-        ->with('productTitle', $productTitle)
-        ->with('productVariantPrice', $productVariantPrice)
-        ->with('productVariantColor', $productVariantColor)
-        ->with('productVariantSize', $productVariantSize)
-        ->with('productVariantStyle', $productVariantStyle);
     }
     /**
      * Show the form for creating a new resource.
