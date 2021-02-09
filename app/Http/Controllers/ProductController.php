@@ -39,17 +39,23 @@ class ProductController extends Controller
     }
     public function search(Request $request)
     {   
-        $products = Product::paginate(10);
-        if ($request->title){
-            $searchedProducts = Product::where('title', 'like', "%{$request->title}%")
-                                        ->whereHas('comments', function($query)
-        {
-            $query->where('in_user_id', Auth::user()->in_user_id);
-        });
-                                        // ->orWhere('city_id', $city_id)
-                                        ->get();
-                dd($searchedProducts);
-            }
+        $products = Product::with(['']);
+        // if ($request->title){
+        //     with([
+        // 'parentable' => function (MorphTo $morphTo) {
+        //                 $morphTo->morphWithCount([
+        //                 Photo::class => ['tags'],
+        //                 Post::class => ['comments'],
+        // ]);
+        //     $searchedProducts = Product::where('title', 'like', "%{$request->title}%")
+        //                                 ->whereHas('comments', function($query)
+        // {
+        //     $query->where('in_user_id', Auth::user()->in_user_id);
+        // });
+        //                                 // ->orWhere('city_id', $city_id)
+        //                                 ->get();
+        //         dd($searchedProducts);
+        //     }
         
         //     echo "Product: " . $product->title;
         // for($i = 0; $i > count($products); $i++){
