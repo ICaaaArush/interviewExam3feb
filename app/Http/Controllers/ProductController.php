@@ -39,8 +39,13 @@ class ProductController extends Controller
     }
     public function search(Request $request)
     {   
-        $products = Product::with(['']);
-        // if ($request->title){
+        $products = Product::with(['productVariantPrices'])->get();
+            // foreach ($products as $product) {
+            //     # code...
+            //     echo $product->productVariantPrices;
+
+            }
+                    // if ($request->title){
         //     with([
         // 'parentable' => function (MorphTo $morphTo) {
         //                 $morphTo->morphWithCount([
