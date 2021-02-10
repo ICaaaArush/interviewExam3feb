@@ -40,20 +40,53 @@ class ProductController extends Controller
     }
     public function search(Request $request)
     {   
+        DB::enableQueryLog(); // Enable query log
         // with(['productVariantPrices'])->
 
                             
-        $searchedProducts = Product::with('productVariantPrices')
-        ->where('title', 'like', "$request->title%")
-        ->whereHas('productVariantPrices', function(Builder $query) use($request){
-            $query->where('price', '>=', "$request->price_from%")
-            ->where('price', '<=', "$request->price_to%");
-        })
+        $searchedProducts = Product::with(['productVariantPrices','productVariant']);
+
+
+        if ($request->title) {
+            $searchedProducts->where('title', 'like', "$request->title%");
+        }
+
+        if ($request->price_from) {
+            $searchedProducts->whereHas('productVariantPrices', function(Builder $query) use($request){
+                $query->where('price', '>=', "$request->price_from%");
+            });
+        }
+
+        if ($request->price_to) {
+            $searchedProducts->whereHas('productVariantPrices', function(Builder $query) use($request){
+                $query->where('price', '<=', "$request->price_to%");
+            });
+        }
+
+        if ($request->variant) {
+            $searchedProducts->whereHas('productVariant', function(Builder $query) use($request){
+                $query->where('variant', 'like', "$request->variant%");
+            });
+        }
+
+        if ($request->date) {
+            $searchedProducts->where('created_at', '>', "$request->date");
+        }
+
         // ->whereHas('productVariantPrices', function(Builder $query) use($request){
         //     $query->where('variant', 'like', '$request-variant');
         // })
-        ->get();
-        dd($searchedProducts);
+        $searchedProducts = $searchedProducts->get();
+        //dd(DB::getQueryLog()); // Show results of log
+          //dd($searchedProducts);
+        if ($searchedProducts) {
+        
+        return view('products.show', compact('searchedProducts'));
+
+        }else{
+            return back();
+        }
+       
     
                     // if ($request->title){
         //     with([

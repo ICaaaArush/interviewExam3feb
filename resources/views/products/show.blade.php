@@ -41,11 +41,11 @@
         <div class="card-body">
             <div class="table-response">
                 <!-- FOR LOOP START -->
-                @for($i = 0; $i < count($products); $i++)
+                @for($i = 0; $i < count($searchedProducts); $i++)
                     @php
                     $date1 = new DateTime("now");
 
-                    $date2 = date_create($products[$i]->created_at);
+                    $date2 = date_create($searchedProducts[$i]->created_at);
 
                     $diff = date_diff($date1,$date2);
 
@@ -65,19 +65,20 @@
                     <tbody>
 
                     <tr>
-                        <td>{{ $products[$i]->id }}</td>
-                        <td>{{ $products[$i]->title }} <br>Created at : {{  $hour  }} hours ago</td>
-                        <td>{{ $products[$i]->description }}</td>
+                        <td>{{ $searchedProducts[$i]->id }}</td>
+                        <td>{{ $searchedProducts[$i]->title }} <br>Created at : {{  $hour  }} hours ago</td>
+                        <td>{{ $searchedProducts[$i]->description }}</td>
                         <td>
                             <dl class="row mb-0" style="height: 80px; overflow: hidden" id="variant{{$i}}">
-
-                                <dt class="col-sm-3 pb-0">//</dt>
+                                @foreach($searchedProducts[$i]->productVariantPrices as $variants)
+                                <dt class="col-sm-3 pb-0">{{ $variants->variant_two->variant}}/{{ $variants->variant_one->variant  }}/{{$variants->variant_three->variant}}</dt>
                                 <dd class="col-sm-9">
                                     <dl class="row mb-0">
-                                        <dt class="col-sm-4 pb-0">Price : </dt>
-                                        <dd class="col-sm-8 pb-0">InStock: </dd>
+                                        <dt class="col-sm-4 pb-0">Price : {{$variants->price }}</dt>
+                                        <dd class="col-sm-8 pb-0">InStock: {{$variants->stock}}</dd>
                                     </dl>
                                 </dd>
+                                @endforeach
                             </dl>
                             <button onclick="$('#variant{{$i}}').toggleClass('h-auto')" class="btn btn-sm btn-link">Show more</button>
                         </td>
@@ -98,17 +99,7 @@
         </div>
 
         <div class="card-footer">
-            <div class="row justify-content-between">
-                
-                <div class="col-md-6">
-                    <!-- PRODUCT LISTING DETAILS START -->
-                    <p>Showing {{$products->firstItem() }} to {{$products->lastItem()}} out of {{$products->total()}}</p>
-                    <!-- PRODUCT LISTING DETAILS END -->
-                </div>
-                <div class="col-md-2">
-                {{ $products->links() }}
-                </div>
-            </div>
+
         </div>
     </div>
 
