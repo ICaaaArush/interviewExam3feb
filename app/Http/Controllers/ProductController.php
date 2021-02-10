@@ -49,9 +49,9 @@ class ProductController extends Controller
             $query->where('price', '>=', "$request->price_from%")
             ->where('price', '<=', "$request->price_to%");
         })
-        ->whereHas('productVariantPrices', function(Builder $query) use($request){
-            $query->where('variant', 'like', '$request-variant');
-        })
+        // ->whereHas('productVariantPrices', function(Builder $query) use($request){
+        //     $query->where('variant', 'like', '$request-variant');
+        // })
         ->get();
         dd($searchedProducts);
     
