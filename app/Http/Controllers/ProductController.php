@@ -40,108 +40,52 @@ class ProductController extends Controller
     }
     public function search(Request $request)
     {   
-        DB::enableQueryLog(); // Enable query log
-        // with(['productVariantPrices'])->
 
-                            
+        //  SEND PRODUCT DATA WITH RELATIONS                    
         $searchedProducts = Product::with(['productVariantPrices','productVariant']);
 
-
+        //  IF USER INPUTS TITLE FETCH RELATED DATA 
         if ($request->title) {
             $searchedProducts->where('title', 'like', "$request->title%");
         }
 
+        //  IF USER INPUTS PRICE_FROM FETCH RELATED DATA
         if ($request->price_from) {
             $searchedProducts->whereHas('productVariantPrices', function(Builder $query) use($request){
                 $query->where('price', '>=', "$request->price_from%");
             });
         }
 
+        //  IF USER INPUTS PRICE_TO FETCH RELATED DATA
         if ($request->price_to) {
             $searchedProducts->whereHas('productVariantPrices', function(Builder $query) use($request){
                 $query->where('price', '<=', "$request->price_to%");
             });
         }
 
+        //  IF USER INPUTS VARIANT FETCH RELATED DATA
         if ($request->variant) {
             $searchedProducts->whereHas('productVariant', function(Builder $query) use($request){
                 $query->where('variant', 'like', "$request->variant%");
             });
         }
 
+        //  IF USER INPUTS DATE FETCH RELATED DATA
         if ($request->date) {
             $searchedProducts->where('created_at', '>', "$request->date");
         }
 
-        // ->whereHas('productVariantPrices', function(Builder $query) use($request){
-        //     $query->where('variant', 'like', '$request-variant');
-        // })
+        //  FETCH RELATED DATA
         $searchedProducts = $searchedProducts->get();
-        //dd(DB::getQueryLog()); // Show results of log
-          //dd($searchedProducts);
+
         if ($searchedProducts) {
-        
-        return view('products.show', compact('searchedProducts'));
+            //  RETRUN VIEW WITH SEARCHED DATA
+            return view('products.show', compact('searchedProducts'));
 
         }else{
+            //  RETURN BACK
             return back();
         }
-       
-    
-                    // if ($request->title){
-        //     with([
-        // 'parentable' => function (MorphTo $morphTo) {
-        //                 $morphTo->morphWithCount([
-        //                 Photo::class => ['tags'],
-        //                 Post::class => ['comments'],
-        // ]);
-        //     $searchedProducts = Product::where('title', 'like', "%{$request->title}%")
-        //                                 ->whereHas('comments', function($query)
-        // {
-        //     $query->where('in_user_id', Auth::user()->in_user_id);
-        // });
-        //                                 // ->orWhere('city_id', $city_id)
-        //                                 ->get();
-        //         dd($searchedProducts);
-        //     }
-        
-        //     echo "Product: " . $product->title;
-        // for($i = 0; $i > count($products); $i++){
-
-        //     $searchedProducts = Product::where('title, 'like' '$reuqest->title)
-        //                             ->where('this', '=', 1)
-        //                             ->where('that', '=', 1)
-        //                             ->get();
-                
-        //     }
-        // }
-        //  SEND PAGINATED DATA
-        
-        // $request->price_from
-        // $request->price_to
-        // $request->date
-        // $productDetails = Product::all();
-        // if ($request->price_from) {
-        //     $productDetails->whereHas('productVariantPrices', function($q) use($request){
-        //         $q->where('price', ">" ,$request->price_from);
-        //     });
-        // }
-        
-
-        // $fetchProductVariant = Product::find(1)->productVariants;
-        // $fetchProductVariant = Product::where('product_id', 3)->productVariants;
-        // dd($fetchProductVariant);
-        //     Project::with(['clients', 'tasks', 'status' => function($q) use($value) {
-        //         // Query the name field in status table
-        //         $q->where('name', '=', $value); // '=' is optional
-        //     }])
-
-        // if ($request->title) {
-        //     $productTitle = DB::table('products')->where('title', 'like', "%{$request->title}%")->get();
-        //     $productTitle = $productTitle->toArray();
-        //     $productId = array_column($productTitle, 'id');
-        // }
-        
         
 }
 
