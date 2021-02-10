@@ -9,6 +9,7 @@ use App\Models\Variant;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 class ProductController extends Controller
 {
@@ -39,12 +40,21 @@ class ProductController extends Controller
     }
     public function search(Request $request)
     {   
-        $products = Product::with(['productVariantPrices'])->get();
-            // foreach ($products as $product) {
-            //     # code...
-            //     echo $product->productVariantPrices;
+        // with(['productVariantPrices'])->
 
-            }
+                            
+        $searchedProducts = Product::with('productVariantPrices')
+        ->where('title', 'like', "$request->title%")
+        ->whereHas('productVariantPrices', function(Builder $query) use($request){
+            $query->where('price', '>=', "$request->price_from%")
+            ->where('price', '<=', "$request->price_to%");
+        })
+        ->whereHas('productVariantPrices', function(Builder $query) use($request){
+            $query->where('variant', 'like', '$request-variant');
+        })
+        ->get();
+        dd($searchedProducts);
+    
                     // if ($request->title){
         //     with([
         // 'parentable' => function (MorphTo $morphTo) {
@@ -100,9 +110,8 @@ class ProductController extends Controller
         // }
         
         
+}
 
-
-    }
     /**
      * Show the form for creating a new resource.
      *
