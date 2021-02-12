@@ -22,6 +22,11 @@ class ProductController extends Controller
     {
         //  SEND PAGINATED DATA WITH ESTABLISHED ELOQUENT RELATIONSHIP
         $products = Product::paginate(10);
+       // dd($products);
+        $variants = Variant::all();
+
+
+       
 
         // foreach($products->items() as $product){
         //     echo "Product: " . $product->title;
@@ -36,7 +41,7 @@ class ProductController extends Controller
         // exit;
 
         
-        return view('products.index',compact('products'));
+        return view('products.index',compact('products' , 'variants' ));
     }
     public function search(Request $request)
     {   

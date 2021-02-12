@@ -15,10 +15,19 @@
                 <div class="col-md-2">
                     <input type="text" name="title" placeholder="Product Title" class="form-control">
                 </div>
-                <div class="col-md-2">
-                    <input type="text" name="variant" placeholder="variant" class="form-control">
-                </div>
 
+                <div class="col-md-2">
+                    <select name="variant" id="variant" name="variant" class="form-control">
+                            <option value="">--Please choose an variant--</option>
+                            @foreach($variants as $vKEy => $vData)
+                                <optgroup label="{{ $vData->title }}">
+                                    @foreach($vData->productVariants->unique('variant') as $vvKey => $vvData)
+                                    <option value="{{ $vvData->variant }}">{{ $vvData->variant }}</option>
+                                    @endforeach
+                            @endforeach
+                    </select>
+                </div>
+                
                 <div class="col-md-3">
                     <div class="input-group">
                         <div class="input-group-prepend">
@@ -45,10 +54,12 @@
                     $date1 = new DateTime("now");
 
                     $date2 = date_create($products[$i]->created_at);
+                    //dd(date_format($date2,"Y/m/d H:i:s"));
 
                     $diff = date_diff($date1,$date2);
 
                     $hour = $diff->h;
+                    $day = $diff->d;
                     @endphp
                 <table class="table">
                     <thead>
@@ -65,7 +76,7 @@
 
                     <tr>
                         <td>{{ $products[$i]->id }}</td>
-                        <td>{{ $products[$i]->title }} <br>Created at : {{  $hour  }} hours ago</td>
+                        <td>{{ $products[$i]->title }} <br>Created at : {{  $day > 1 ? $day . " days" : $hour . " hours"  }} ago</td>
                         <td>{{ $products[$i]->description }}</td>
                         <td>
                             <dl class="row mb-0" style="height: 80px; overflow: hidden" id="variant{{$i}}">
